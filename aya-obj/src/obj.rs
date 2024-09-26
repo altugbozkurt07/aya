@@ -28,7 +28,7 @@ use crate::{
     },
     maps::{bpf_map_def, BtfMap, BtfMapDef, LegacyMap, Map, PinningType, MINIMUM_MAP_SIZE},
     programs::{
-        CgroupSockAddrAttachType, CgroupSockAttachType, CgroupSockoptAttachType, XdpAttachType,
+        CgroupSockAddrAttachType, CgroupSockAttachType, CgroupSockoptAttachType, LsmAttachType, XdpAttachType
     },
     relocation::*,
     util::HashMap,
@@ -275,6 +275,7 @@ pub enum ProgramSection {
     RawTracePoint,
     Lsm {
         sleepable: bool,
+        attach_type: LsmAttachType,
     },
     BtfTracePoint,
     FEntry {
@@ -432,8 +433,9 @@ impl FromStr for ProgramSection {
             "lirc_mode2" => LircMode2,
             "perf_event" => PerfEvent,
             "raw_tp" | "raw_tracepoint" => RawTracePoint,
-            "lsm" => Lsm { sleepable: false },
-            "lsm.s" => Lsm { sleepable: true },
+            "lsm" => Lsm { sleepable: false, attach_type: LsmAttachType::Mac},
+            "lsm.s" => Lsm { sleepable: true, attach_type: LsmAttachType::Mac },
+            "lsm_cgroup" => Lsm { sleepable: false, attach_type: LsmAttachType::Cgroup },
             "fentry" => FEntry { sleepable: false },
             "fentry.s" => FEntry { sleepable: true },
             "fexit" => FExit { sleepable: false },

@@ -55,6 +55,7 @@ pub mod kprobe;
 pub mod links;
 pub mod lirc_mode2;
 pub mod lsm;
+pub mod lsm_cgroup;
 pub mod perf_attach;
 pub mod perf_event;
 pub mod raw_trace_point;
@@ -878,7 +879,6 @@ impl_from_pin!(
     CgroupSysctl,
     LircMode2,
     PerfEvent,
-    Lsm,
     RawTracePoint,
     BtfTracePoint,
     FEntry,
