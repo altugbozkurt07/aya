@@ -22,6 +22,7 @@ impl Lsm {
         let sleepable = pop_bool_arg(&mut args, "sleepable");
         
         err_on_unknown_args(&args)?;
+
         Ok(Self {
             item,
             hook,
@@ -30,41 +31,7 @@ impl Lsm {
         })
     }
 
-<<<<<<< HEAD
     pub(crate) fn expand(&self) -> TokenStream {
-        let Self {
-            item,
-            hook,
-            sleepable,
-        } = self;
-        let ItemFn {
-            attrs: _,
-            vis,
-            sig,
-            block: _,
-        } = item;
-        let section_prefix = if *sleepable { "lsm.s" } else { "lsm" };
-        let section_name: Cow<'_, _> = if let Some(hook) = hook {
-            format!("{}/{}", section_prefix, hook).into()
-        } else {
-            section_prefix.into()
-        };
-        // LSM probes need to return an integer corresponding to the correct
-        // policy decision. Therefore we do not simply default to a return value
-        // of 0 as in other program types.
-        let fn_name = &sig.ident;
-        quote! {
-            #[no_mangle]
-            #[link_section = #section_name]
-            #vis fn #fn_name(ctx: *mut ::core::ffi::c_void) -> i32 {
-                return #fn_name(::aya_ebpf::programs::LsmContext::new(ctx));
-
-                #item
-            }
-        }
-    }
-=======
-    pub(crate) fn expand(&self) -> Result<TokenStream> {
         
         if self.cgroup{
             let section_name = if let Some(name) = &self.hook{
@@ -76,7 +43,7 @@ impl Lsm {
             let fn_name = &self.item.sig.ident;
             let item = &self.item;
 
-            Ok(quote! {
+            quote! {
                 #[no_mangle]
                 #[link_section = #section_name]
                 fn #fn_name(ctx: *mut ::core::ffi::c_void) -> i32 {
@@ -84,7 +51,7 @@ impl Lsm {
     
                     #item
                 }
-            })
+            }
 
         }else{
             let section_prefix = if self.sleepable { "lsm.s" } else { "lsm" };
@@ -98,7 +65,7 @@ impl Lsm {
             let fn_name = self.item.sig.ident.clone();
             let item = &self.item;
 
-            Ok(quote! {
+            quote! {
                 #[no_mangle]
                 #[link_section = #section_name]
                 #fn_vis fn #fn_name(ctx: *mut ::core::ffi::c_void) -> i32 {
@@ -106,7 +73,7 @@ impl Lsm {
     
                     #item
                 }
-            })
+            }
         }
         
     }
@@ -114,7 +81,6 @@ impl Lsm {
      // LSM probes need to return an integer corresponding to the correct
     // policy decision. Therefore we do not simply default to a return value
         // of 0 as in other program types.
->>>>>>> bcb9baa (lsm_cgroup program type support for aya)
 }
 
 #[cfg(test)]
@@ -194,7 +160,7 @@ mod tests {
             },
         )
         .unwrap();
-        let expanded = prog.expand().unwrap();
+        let expanded = prog.expand();
         let expected = quote! {
             #[no_mangle]
             #[link_section = "lsm_cgroup/bprm_committed_creds"]

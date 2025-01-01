@@ -59,7 +59,7 @@ pub fn build_ebpf(packages: impl IntoIterator<Item = Package>) -> Result<()> {
 
         let mut cmd = Command::new("cargo");
         cmd.args([
-            "+nightly",
+            "+nightly-2024-07-23",
             "build",
             "--package",
             &name,

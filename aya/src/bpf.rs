@@ -27,14 +27,10 @@ use crate::{
         Object, ParseError, ProgramSection,
     },
     programs::{
-<<<<<<< HEAD
         BtfTracePoint, CgroupDevice, CgroupSkb, CgroupSkbAttachType, CgroupSock, CgroupSockAddr,
         CgroupSockopt, CgroupSysctl, Extension, FEntry, FExit, Iter, KProbe, LircMode2, Lsm,
         PerfEvent, ProbeKind, Program, ProgramData, ProgramError, RawTracePoint, SchedClassifier,
         SkLookup, SkMsg, SkSkb, SkSkbKind, SockOps, SocketFilter, TracePoint, UProbe, Xdp,
-=======
-        BtfTracePoint, CgroupDevice, CgroupSkb, CgroupSkbAttachType, CgroupSock, CgroupSockAddr, CgroupSockopt, CgroupSysctl, Extension, FEntry, FExit, KProbe, LircMode2, Lsm, PerfEvent, ProbeKind, Program, ProgramData, ProgramError, RawTracePoint, SchedClassifier, SkLookup, SkMsg, SkSkb, SkSkbKind, SockOps, SocketFilter, TracePoint, UProbe, Xdp
->>>>>>> bcb9baa (lsm_cgroup program type support for aya)
     },
     sys::{
         bpf_load_btf, is_bpf_cookie_supported, is_bpf_global_data_supported,
@@ -410,14 +406,9 @@ impl<'a> EbpfLoader<'a> {
                                 ProgramSection::Extension
                                 | ProgramSection::FEntry { sleepable: _ }
                                 | ProgramSection::FExit { sleepable: _ }
-<<<<<<< HEAD
-                                | ProgramSection::Lsm { sleepable: _ }
+                                | ProgramSection::Lsm { sleepable: _, attach_type: _ }
                                 | ProgramSection::BtfTracePoint
                                 | ProgramSection::Iter { sleepable: _ } => {
-=======
-                                | ProgramSection::Lsm { sleepable: _, attach_type: _ }
-                                | ProgramSection::BtfTracePoint => {
->>>>>>> bcb9baa (lsm_cgroup program type support for aya)
                                     return Err(EbpfError::BtfError(err))
                                 }
                                 ProgramSection::KRetProbe

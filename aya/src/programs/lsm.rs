@@ -2,18 +2,16 @@
 
 use std::os::fd::AsFd;
 
-use aya_obj::{generated::bpf_attach_type, programs::LsmAttachType};
+use aya_obj::programs::LsmAttachType;
 
 use crate::{
-    generated::{bpf_attach_type::BPF_LSM_MAC, bpf_prog_type::BPF_PROG_TYPE_LSM},
+    generated::bpf_prog_type::BPF_PROG_TYPE_LSM,
     obj::btf::{Btf, BtfKind},
     programs::{
         define_link_wrapper, load_program, utils::attach_raw_tracepoint, FdLink, FdLinkId,
         ProgramData, ProgramError,
     }, sys::{bpf_link_create, LinkTarget, SyscallError},
 };
-
-use super::Link;
 
 /// A program that attaches to Linux LSM hooks. Used to implement security policy and
 /// audit logging.
@@ -90,7 +88,9 @@ impl Lsm {
     /// * `lsm_hook_name` - full name of the LSM hook that the program should
     ///   be attached to
     pub fn load(&mut self, lsm_hook_name: &str, btf: &Btf) -> Result<(), ProgramError> {
+       
         self.data.expected_attach_type = Some(self.attach_type.into());
+        println!("attach type: -- {:?}", self.data.expected_attach_type);
         let type_name = format!("bpf_lsm_{lsm_hook_name}");
         self.data.attach_btf_id =
             Some(btf.id_by_type_name_kind(type_name.as_str(), BtfKind::Func)?);
@@ -110,13 +110,13 @@ impl Lsm {
                     let attach_type = self.data.expected_attach_type.unwrap();
                     let btf_id = self.data.attach_btf_id;
             
-                
                     let link_fd = bpf_link_create(
                         prog_fd,
                         LinkTarget::Fd(cgroup_fd),
                         attach_type,
                         btf_id,
                         0,
+                        None,
                     )
                     .map_err(|(_, io_error)| SyscallError {
                         call: "bpf_link_create",
